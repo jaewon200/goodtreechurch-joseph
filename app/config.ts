@@ -7,5 +7,5 @@ export const SITE_NAME = `${CHURCH_NAME} ${DEPT_NAME}`;
 export const TAGLINE = "예수님과 함께 걷는 우리";
 
 export const WORSHIP_TIME = "매주 주일 11:00 ~ 13:00";
-export const WORSHIP_PLACE = "교육관 2층"; // TODO: 실제 장소로 교체
+export const WORSHIP_PLACE = "좋은나무교회 (서울특별시 송파구 성내천로20길 6)";
 export const DEPT_AGE_RANGE = "~7세";
