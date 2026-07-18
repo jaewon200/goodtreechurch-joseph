@@ -1,0 +1,38 @@
+/* DecorLayer — 장식 레이어. 본문을 침범하지 않는다. */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-decor); /* 0 — 모든 콘텐츠 아래 */
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── 꽃잎 ── */
+.petal {
+  position: absolute;
+  top: -24px; /* 화면 위에서 시작 */
+  display: inline-flex;
+  will-change: transform;
+  /* globals.css @keyframes petalDrift 사용 */
+  animation-name: petalDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  opacity: 0; /* 애니메이션 시작 전 숨김 */
+}
+
+/* ── 나비 — 우상단 가장자리, 비루프 ── */
+.butterfly {
+  position: absolute;
+  top: 14%;
+  right: 4vw;
+  display: inline-flex;
+  will-change: transform;
+  /* globals.css @keyframes butterflySettle 사용, 한 번만 */
+  animation-name: butterflySettle;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  opacity: 0; /* 애니메이션이 채운다 */
+}

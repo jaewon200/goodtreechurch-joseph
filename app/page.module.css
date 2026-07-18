@@ -1,0 +1,76 @@
+/* 콘텐츠는 앰비언트 장식(DecorLayer, z:decor=0) 위로.
+   z:1 stacking context → 읽는 종이 칼럼을 꽃잎이 절대 침범하지 않는다. */
+.page {
+  position: relative;
+  z-index: var(--z-field);
+}
+
+/* ── 공통: 우드 플라크 제목 (미니 팻말) ── */
+.plaqueTitle {
+  display: inline-block;
+  margin: 0 0 1.25rem;
+  padding: 0.35rem 1.1rem;
+  background: var(--wood);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.14), var(--shadow-warm);
+}
+
+.plaqueTitleInner {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5.5vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+
+/* 종이 섹션의 중앙 제목(플라크 아님) */
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.22;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+/* ── 환영 — sky-soft 마당, 안으로 들어섬 ── */
+.welcome {
+  background:
+    radial-gradient(
+      ellipse 90% 70% at 50% 40%,
+      oklch(from var(--sky) l c h / 0.22) 0%,
+      transparent 68%
+    ),
+    var(--sky-soft);
+  padding-block: clamp(3.5rem, 12vw, 6rem);
+  padding-inline: clamp(1.25rem, 5vw, 2rem);
+}
+
+.welcomeInner {
+  max-width: 40rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.welcomeText {
+  font-family: var(--font-sans);
+  font-size: clamp(1.0625rem, 2.5vw, 1.125rem);
+  line-height: 1.85;
+  color: var(--ink);
+  text-wrap: pretty;
+  word-break: keep-all;
+}
+
+/* ── 이번 주 말씀 — 성소의 고요 ── */
+.latest {
+  background: var(--paper);
+  padding-block: clamp(3.5rem, 12vw, 6rem);
+  padding-inline: clamp(1.25rem, 5vw, 2rem);
+}
+
+.latestInner {
+  max-width: 40rem;
+  margin-inline: auto;
+}

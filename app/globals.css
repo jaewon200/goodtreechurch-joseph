@@ -1,0 +1,214 @@
+/* ──────────────────────────────────────────────────────────────
+   요셉부 — 봄볕 그림책 (Spring-Light Storybook)
+   토큰 · 베이스 · 모션. 색은 히어로 일러스트에서 직접 추출(OKLCH).
+   ────────────────────────────────────────────────────────────── */
+
+/* ── 폰트 로드 ──
+   디스플레이(강원교육새음체, next/font/local)·말씀(Gowun Batang, next/font/google)은
+   layout.tsx에서 로드해 --font-gangwon / --font-gowun 변수로 주입한다.
+   Pretendard(UI/본문)는 next/font 미제공 → CDN static @import. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+:root {
+  /* ── 폰트 스택 (next/font 변수를 1순위로 연결) ── */
+  --font-display: var(--font-gangwon), "Pretendard", system-ui, sans-serif;  /* 워드마크·히어로·섹션 제목 전용 (강원교육새음체) */
+  --font-verse:   var(--font-gowun), "Nanum Myeongjo", serif;                /* 말씀 본문·큰 인용 */
+  --font-sans:    "Pretendard", system-ui, -apple-system, sans-serif;        /* UI·본문·메타 */
+
+  /* ── 종이 면 (말씀이 쉬는 성소) ── */
+  --paper:       oklch(0.985 0.010 82);  /* 따뜻한 아이보리 — 페이지·카드 바탕 */
+  --paper-warm:  oklch(0.966 0.015 80);  /* 살짝 깊은 종이 — 인용 웰, 교대 행 */
+  --paper-edge:  oklch(0.930 0.016 82);  /* 실선 경계·구분선 */
+  --ink:         oklch(0.260 0.023 60);  /* 말씀 본문 — 따뜻한 near-black ≈12:1 */
+  --ink-soft:    oklch(0.405 0.029 60);  /* 보조 텍스트(주차·날짜) ≈6.5:1 */
+  --ink-faint:   oklch(0.540 0.029 60);  /* 라벨/메타, ≥16px에서만 ≈4.6:1 — 본문 금지 */
+
+  /* ── 마당 면 (기쁨의 세계) ── */
+  --sky:         oklch(0.885 0.058 233); /* 소프트 하늘 — 히어로 상단·섹션 필드 */
+  --sky-soft:    oklch(0.950 0.028 231); /* 옅은 하늘 — 기본 섹션 배경 워시 */
+  --meadow:      oklch(0.785 0.120 143); /* 봄 연두 — 악센트·아카이브 연결선·잎 */
+  --meadow-deep: oklch(0.575 0.112 146); /* 잎·줄기, 초록 텍스트 ≥4.5:1 */
+  --blossom:     oklch(0.880 0.045 355); /* 더스티로즈 워시 — 부드러운 채움 */
+
+  /* ── 따뜻한 앵커 & 악센트 ── */
+  --wood:        oklch(0.580 0.065 58);  /* 테라코타/우드 — 팻말·플라크·구조적 따뜻함 */
+  --wood-deep:   oklch(0.440 0.060 55);  /* 우드 텍스트/경계, 푸터 바닥 */
+  --rose:        oklch(0.720 0.100 16);  /* 더스티 로즈(연) — 채움·밑줄·하트 하이라이트 */
+  --rose-deep:   oklch(0.530 0.130 16);  /* 로즈(진) — 주 인터랙션(링크·CTA·focus·출처) ≥5:1 */
+  --gold:        oklch(0.815 0.130 82);  /* 겨자 태양 — 하이라이트·글로·"이번 주" 태그 */
+  --gold-deep:   oklch(0.600 0.120 74);  /* 골드 텍스트 ≥4.5:1 */
+  --coral:       oklch(0.630 0.170 30);  /* 코랄 포인트 — 하트·유일한 CTA에만(아껴서) */
+  --coral-ink:   oklch(0.500 0.165 30);  /* 코랄 텍스트가 필요할 때 ≥4.5:1 */
+
+  /* ── 신호 & 재질 ── */
+  --halo:        oklch(0.930 0.075 88 / 0.55);           /* 따뜻한 햇무리 radial — 장식 전용 */
+  --shadow-warm: 0 6px 24px oklch(0.560 0.075 55 / 0.14); /* 유일한 그림자 토큰(낮고 따뜻) */
+  --radius-card: 20px;
+
+  /* ── z-스케일: decor < field < paper-card < nav < modal < toast ── */
+  --z-decor:      0;
+  --z-field:      1;
+  --z-paper-card: 2;
+  --z-nav:        30;
+  --z-modal:      40;
+  --z-toast:      50;
+
+  /* ── 이징 ── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── 리셋 ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* sticky nav 아래로 앵커가 가리지 않게 */
+  scroll-padding-top: 72px;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--ink);
+  background: var(--sky-soft);
+  font-family: var(--font-sans);
+  font-size: clamp(1.0625rem, 0.5vw + 1rem, 1.125rem); /* 17px → 18px */
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all; /* 모든 한글 어절 보호 */
+}
+
+/* ── 타이포 기본 ── */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400; /* 강원교육새음체는 단일 굵기 — 크기로 위계를 준다 */
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+/* 폼 컨트롤은 폰트를 상속받지 않는다 → 명시적 상속으로 Arial 폴백 방지 */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+p {
+  text-wrap: pretty;
+  word-break: keep-all;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 긴 참조/URL만 어절 중간 끊김 허용 */
+.wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+
+/* ── 포커스 링 (모든 면에서 보이도록: rose-deep 2px + 2px 종이 오프셋) ── */
+:focus-visible {
+  outline: 2px solid var(--rose-deep);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── 스크린 리더 전용 ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   모션 (2D 그림책 — 스크럽 카메라·orbit 없음)
+   ────────────────────────────────────────────────────────────── */
+
+/* 카드 등장: fade + translateY(16→0), ease-out-expo, no bounce */
+@keyframes fadeRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 따뜻한 골드 글로 은은한 맥동 (히어로·이번주 카드 뒤) */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.72; }
+}
+
+/* 나비: 로드 시 한 번 살포시 앉고 멈춤 (루프 금지) */
+@keyframes butterflySettle {
+  0%   { opacity: 0; transform: translateY(-14px) rotate(-10deg); }
+  60%  { opacity: 1; transform: translateY(2px) rotate(4deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+
+/* 꽃잎: 아주 느린 하강 + 회전 */
+@keyframes petalDrift {
+  0%   { transform: translate3d(0, -24px, 0) rotate(0deg);   opacity: 0; }
+  12%  { opacity: 0.45; }
+  88%  { opacity: 0.4; }
+  100% { transform: translate3d(24px, 106vh, 0) rotate(320deg); opacity: 0; }
+}
+
+/* 스크롤 큐 셰브런 아주 작게 상하 */
+@keyframes chevronBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+/* ── reduced-motion 블랭킷 (기본 품질 경로) ──
+   Ken-Burns·패럴럭스·꽃잎·구름·나비·선 그리기 전부 무력화.
+   허용: 카드 등장의 부드러운 opacity 페이드(≤200ms)만. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 200ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* 등장 요소는 최종 상태로, 부드러운 페이드만 */
+  [data-animate] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
